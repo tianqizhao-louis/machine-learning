@@ -25,6 +25,7 @@ class Perceptron(object):
                 update = self.learning_rate * (target - self.predict(x))
                 self.weights[1:] += update * x
                 self.weights[0] += update
+                # take a look again, not multiplications, line 26 & line 27
                 errors += int(update != 0.0)
                 self.errors_.append(errors)
             return self
