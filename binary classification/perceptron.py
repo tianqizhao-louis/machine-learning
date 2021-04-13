@@ -65,6 +65,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 per.fit(X_train, y_train)
 print(per.score(X_test, y_test), per.score(X_train, y_train))
 
+# https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.Perceptron.html
+
 
 
 model = LinearRegression()
