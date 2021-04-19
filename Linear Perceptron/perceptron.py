@@ -32,6 +32,8 @@ class My_Perceptron(object):
         # initialize all weights to 0
         weight_vector = [0 for i in range(len(dataset[0]))]
 
+        total_sum_dataset = len(dataset)
+
         for each_iter in range(self.max_iter):
             error_count = 0
             for line in dataset:
@@ -50,8 +52,12 @@ class My_Perceptron(object):
                 # update the bias
                 weight_vector[0] = weight_vector[0] + self.r * (desired_output - actual_output)
             print('Number of Errors: ' + str(error_count))
+            print('Score: ' + str(self.score(error_count, total_sum_dataset)))
             random.shuffle(dataset)
         return
+    
+    def score(self, errors, total_number):
+        return (total_number - errors) / total_number
 
 
 
@@ -65,5 +71,19 @@ float_list = [[float(item) for item in inner] for inner in list_of_lists]
 
 my_perceptron.train(float_list)
 
+# from sklearn.datasets import load_digits
+# from sklearn.linear_model import Perceptron
+
+# X_array = []
+# for item in float_list:
+#     X_array.append(item[:len(item) - 2])
+
+# y_array = []
+# for final_output in float_list:
+#     y_array.append(item[len(item) - 1])
 
 
+
+# sklearn_perceptron = Perceptron(tol=1e-3, random_state=0)
+# sklearn_perceptron.fit(X_array, y_array)
+# sklearn_perceptron.score(X_array, y_array)
