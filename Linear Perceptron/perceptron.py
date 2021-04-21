@@ -46,9 +46,10 @@ class My_Perceptron(object):
                     error_count += 1
                 
                 # update the weights
-                for w in range(len(weight_vector) - 1):
-                   weight_vector[w + 1] = weight_vector[w] + self.r * (desired_output - actual_output) * line[w]
-                
+                for w in range(1, len(weight_vector)):
+                   weight_vector[w] = weight_vector[w] + self.r * (desired_output - actual_output) * line[w]
+
+
                 # update the bias
                 weight_vector[0] = weight_vector[0] + self.r * (desired_output - actual_output)
             print('Number of Errors: ' + str(error_count))
