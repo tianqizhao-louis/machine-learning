@@ -2,59 +2,52 @@ import random
 import numpy as np 
 
 class My_Perceptron(object):
-    def __init__(self, r=0.01, initial_weight=0, max_iter=5, threshold=0):
-        self.r = r # learning rate, between 0 and 1
-        self.initial_weight = initial_weight # initial value of weights
-        self.max_iter = max_iter
-        self.threshold = threshold # threshold, in this case, 0
+    def __init__(self):
+        self.weight_vector = []
     
-    def function(self, z, weight_vector):
+    def function(self, features):
         '''Activation function
         
         z is the input vector Z
         weight_vector is the vector of weights
         '''
-        bias = weight_vector[0]
-        total_sum = 0
-        for i in range(len(z) - 1):
+        total_sum = self.weight_vector[0]
+        for i in range(1, len(features)):
             # f(x) = wx + b
-            total_sum += z[i] * weight_vector[i+1]
-        
-        total_sum += bias
+            total_sum += features[i] * self.weight_vector[i+1]
 
         return 1.0 if total_sum >= 0.0 else 0.0
     
-    def train(self, dataset):
+    def train(self, features, labels, r=0.01, max_iter=5):
         '''Train the weights
 
         dataset is the input dataset
         '''
         # initialize all weights to 0
-        weight_vector = [0 for i in range(len(dataset[0]))]
+        self.weight_vector = [0 for i in range(len(features[0]) + 1)]
 
-        total_sum_dataset = len(dataset)
+        total_sum_dataset = len(features)
 
-        for each_iter in range(self.max_iter):
+        for each_iter in range(max_iter):
             error_count = 0
-            for line in dataset:
+            for instance_features, label in zip(features, labels):
                 # Calculate the actual output
-                actual_output = self.function(line, weight_vector)
-                # desired output, last item in the line
-                desired_output = line[len(line) - 1]
-                if actual_output != desired_output:
+                actual_output = self.function(instance_features)
+                if actual_output != label:
                     # wrong output
                     error_count += 1
-                
-                # update the weights
-                for w in range(1, len(weight_vector)):
-                   weight_vector[w] = weight_vector[w] + self.r * (desired_output - actual_output) * line[w]
+                    # update the weights
+                    diff = r * (label - actual_output)
 
+                    for w in range(1, len(self.weight_vector)):
+                        self.weight_vector[w] += diff * instance_features[w-1]
+                    
+                    # update the bias
+                    self.weight_vector[0] += diff
 
-                # update the bias
-                weight_vector[0] = weight_vector[0] + self.r * (desired_output - actual_output)
             print('Number of Errors: ' + str(error_count))
             print('Score: ' + str(self.score(error_count, total_sum_dataset)))
-            random.shuffle(dataset)
+            # random.shuffle(dataset)
         return
     
     def score(self, errors, total_number):
@@ -66,11 +59,12 @@ class My_Perceptron(object):
 my_perceptron = My_Perceptron()
 list_of_lists = []
 with open('bankdata.txt', 'r') as txt_file:
-    list_of_lists = [line.strip().split(',') for line in txt_file]
+    list_of_lists = [[float(item) for item in line.strip().split(',')] for line in txt_file]
 
-float_list = [[float(item) for item in inner] for inner in list_of_lists]
+all_features = [item[:-1] for item in list_of_lists]
+all_labels = [item[-1] for item in list_of_lists]
 
-my_perceptron.train(float_list)
+my_perceptron.train(all_features, all_labels, r=0.001, max_iter=20)
 
 # from sklearn.datasets import load_digits
 # from sklearn.linear_model import Perceptron
