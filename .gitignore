@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+yelp_sentiment_tokenized/
+
 # Distribution / packaging
 .Python
 build/

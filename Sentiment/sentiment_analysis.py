@@ -1,4 +1,5 @@
-import numpy as np
+import pandas as pd
+from collections import defaultdict
 
 
 def score(errors, total_number):
@@ -53,3 +54,40 @@ class MyPerceptron(object):
             print('Score: ' + str(score(error_count, total_sum_dataset)))
             # random.shuffle(dataset)
         return
+
+
+def bag_of_words(train_dataset, test_dataset):
+    """Create a bag of words features
+
+    a dict representation of word counts
+    """
+    # read from the file
+    tsv_file = pd.read_csv(filepath_or_buffer=train_dataset, delimiter='\t', quotechar='"', nrows=3, header=None)
+
+    # using lowercase
+    tsv_file.iloc[:, 1] = tsv_file.iloc[:, 1].str.lower()
+
+    # change the sentiment, positive = 1.0, negative = 0.0
+    tsv_file.iloc[:, 0] = tsv_file.iloc[:, 0].astype(float)
+    for row_number in range(len(tsv_file.iloc[:, 0])):
+        if tsv_file.iloc[row_number, 0] == 2:
+            tsv_file.iloc[row_number, 0] = 1.0
+        else:
+            tsv_file.iloc[row_number, 0] = 0.0
+
+    # create a bag of words and add to the end
+    new_column = []
+    for row_number in range(len(tsv_file.iloc[:, 1])):
+        new_column.append(count_appearance(tsv_file.iloc[row_number, 1].split()))
+
+    tsv_file[len(tsv_file) - 1] = new_column
+
+
+def count_appearance(list_of_words):
+    bag = defaultdict(int)
+    for word in list_of_words:
+        bag[word] += 1
+    return bag
+
+
+bag_of_words('yelp_sentiment_tokenized/train_tokenized.tsv', '')
