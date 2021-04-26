@@ -32,7 +32,7 @@ model = LinearRegression()
 model.fit(x, y)
 
 # Step 4: Get results
-r_sq = model.score(x, y)
+r_sq = score(x, y)
 print('coefficient of determination:', r_sq)
 print('intercept:', model.intercept_)
 print('slope:', model.coef_)

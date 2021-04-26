@@ -63,4 +63,4 @@ print(prcptrn.score(X_test, y_test), prcptrn.score(X_train, y_train))
 
 model = LinearRegression()
 model.fit(X_train, y_train)
-print(model.score(X_test, y_test), model.score(X_train, y_train))
+print(score(X_test, y_test), score(X_train, y_train))

@@ -71,7 +71,7 @@ print(per.score(X_test, y_test), per.score(X_train, y_train))
 
 model = LinearRegression()
 model.fit(X_train, y_train)
-print(model.score(X_test, y_test), model.score(X_train, y_train))
+print(score(X_test, y_test), score(X_train, y_train))
 
 
 # plt.plot(range(1, len(per.errors_) + 1), per.errors_, marker='o')
