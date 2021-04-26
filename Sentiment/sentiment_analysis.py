@@ -90,4 +90,4 @@ def count_appearance(list_of_words):
     return bag
 
 
-bag_of_words('yelp_sentiment_tokenized/train_tokenized.tsv', '')
+bag_of_words('yelp_sentiment_tokenized/train_tokenized.tsv', 'yelp_sentiment_tokenized/test_tokenized.tsv')
