@@ -1,6 +1,7 @@
 import pandas as pd
 from collections import defaultdict
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.linear_model import Perceptron
 
 
 def score(errors, total_number):
@@ -83,13 +84,14 @@ def bag_of_words(train_dataset, test_dataset, max_lines):
             tsv_file.iloc[row_number, 0] = 0.0
 
     # create a bag of words and add to the end
-    new_column = []
+    feature_list = []
     for row_number in range(len(tsv_file.iloc[:, 1])):
-        new_column.append(count_appearance(tsv_file.iloc[row_number, 1].split()))
+        feature_list.append(count_appearance(tsv_file.iloc[row_number, 1].split()))
 
-    # tsv_file[len(tsv_file) - 1] = new_column
-    labels = tsv_file.iloc[:, 0].to_list()
-    return labels, new_column
+    # tsv_file[len(tsv_file) - 1] = feature_list
+    label_list = tsv_file.iloc[:, 0].to_list()
+
+    return label_list, feature_list
 
 
 def count_appearance(list_of_words):
@@ -99,6 +101,18 @@ def count_appearance(list_of_words):
     return bag
 
 
+# my perceptron
+print('----------')
+print('My Perceptron')
 all_labels, all_features = bag_of_words('yelp_sentiment_tokenized/train_tokenized.tsv', 'yelp_sentiment_tokenized/test_tokenized.tsv', 1000)
 my_perceptron = MyPerceptron()
 my_perceptron.train(all_features, all_labels)
+print('----------')
+
+# sklearn
+print('\n----------')
+print('Sklearn')
+sklearn_perceptron = Perceptron()
+sklearn_perceptron.fit(feature_to_vector(all_features), all_labels)
+print(sklearn_perceptron.score(feature_to_vector(all_features), all_labels))
+print('----------')
