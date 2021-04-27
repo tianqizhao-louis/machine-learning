@@ -1,9 +1,14 @@
 import pandas as pd
 from collections import defaultdict
+from sklearn.feature_extraction import DictVectorizer
 
 
 def score(errors, total_number):
     return (total_number - errors) / total_number
+
+
+def feature_to_vector(feature_dict):
+    return DictVectorizer(sparse=False).fit_transform(feature_dict)
 
 
 class MyPerceptron(object):
@@ -29,13 +34,15 @@ class MyPerceptron(object):
         dataset is the input dataset
         """
         # initialize all weights to 0
-        self.weight_vector = defaultdict(int)
-        count_training_ex = len(features)
 
-        #TODO: work on dicts
+        vectorized_features = feature_to_vector(features)
+        count_training_ex = len(vectorized_features)
+
+        self.weight_vector = [0.0 for i in range(len(vectorized_features[0]) + 1)]
+
         for each_iter in range(max_iter):
             error_count = 0
-            for instance_features, label in zip(features, labels):
+            for instance_features, label in zip(vectorized_features, labels):
                 # Calculate the actual output
                 actual_output = self.function(instance_features)
                 if actual_output != label:
@@ -56,13 +63,13 @@ class MyPerceptron(object):
         return
 
 
-def bag_of_words(train_dataset, test_dataset):
+def bag_of_words(train_dataset, test_dataset, max_lines):
     """Create a bag of words features
 
     a dict representation of word counts
     """
     # read from the file
-    tsv_file = pd.read_csv(filepath_or_buffer=train_dataset, delimiter='\t', quoting=3, nrows=3, header=None)
+    tsv_file = pd.read_csv(filepath_or_buffer=train_dataset, delimiter='\t', quoting=3, nrows=max_lines, header=None)
 
     # using lowercase
     tsv_file.iloc[:, 1] = tsv_file.iloc[:, 1].str.lower()
@@ -92,6 +99,6 @@ def count_appearance(list_of_words):
     return bag
 
 
-all_labels, all_features = bag_of_words('yelp_sentiment_tokenized/train_tokenized.tsv', 'yelp_sentiment_tokenized/test_tokenized.tsv')
+all_labels, all_features = bag_of_words('yelp_sentiment_tokenized/train_tokenized.tsv', 'yelp_sentiment_tokenized/test_tokenized.tsv', 1000)
 my_perceptron = MyPerceptron()
 my_perceptron.train(all_features, all_labels)
