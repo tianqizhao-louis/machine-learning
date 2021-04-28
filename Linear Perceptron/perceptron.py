@@ -10,7 +10,7 @@ class My_Perceptron(object):
         '''Activation function
         
         z is the input vector Z
-        weight_vector is the vector of weights
+        weights is the vector of weights
         '''
         total_sum = self.weight_vector[0]
         for i in range(1, len(features)):
