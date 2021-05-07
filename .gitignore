@@ -7,6 +7,13 @@ __pycache__/
 *.so
 
 yelp_sentiment_tokenized/
+data/
+
+model.pth
+
+model.onnx
+
+model_weights.pth
 
 # Distribution / packaging
 .Python
@@ -132,3 +139,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+pytorch/model.pth
