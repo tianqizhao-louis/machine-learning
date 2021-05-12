@@ -120,7 +120,20 @@ total_accu = None
 # TODO: fit existing yelp sentiment into Dataloader; map-style, tuple of (sentiment, sentence)
 # train_iter, test_iter = AG_NEWS()
 # train_dataset = list(train_iter)
-# test_dataset = list(test_iter)
+# test_dataset = list
+
+
+# AG_NEWS is a list of tuple, containing (label, sentence). E.g. (4, "Hello")
+# So I use "process_to_pytorch" method to generate the data structure.
+#   It's in process_data.py
+# random_split will split the train dataset into 9:1
+# then it will put them into Dataloader in order to enumerate.
+# The problem happens in line train(train_dataloader),
+# in the train method, loss = criterion(predited_label, label)
+# it says it is out of bounds. But I print out the predicted_label and label,
+# they have the same length.
+
+
 train_dataset = process_to_pytorch('yelp_sentiment_tokenized/train_tokenized.tsv', 10000)
 test_dataset = process_to_pytorch('yelp_sentiment_tokenized/test_tokenized.tsv', 10000)
 num_train = int(len(train_dataset) * 0.95)
