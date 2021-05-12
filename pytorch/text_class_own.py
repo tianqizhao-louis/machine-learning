@@ -7,6 +7,7 @@ from torch import nn
 import time
 from torch.utils.data.dataset import random_split
 from torch.utils.data import DataLoader
+from process_data import process_to_pytorch
 
 tokenizer = get_tokenizer('basic_english')
 train_iter = AG_NEWS(split='train')
@@ -76,6 +77,9 @@ def train(dataloader):
     for idx, (label, text, offsets) in enumerate(dataloader):
         optimizer.zero_grad()
         predited_label = model(text, offsets)
+        # TODO: print
+        print(predited_label)
+        print('\t', label)
         loss = criterion(predited_label, label)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.1)
@@ -113,9 +117,12 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.1)
 total_accu = None
 
 # TODO: Here, modify train and test
-train_iter, test_iter = AG_NEWS()
-train_dataset = list(train_iter)
-test_dataset = list(test_iter)
+# TODO: fit existing yelp sentiment into Dataloader; map-style, tuple of (sentiment, sentence)
+# train_iter, test_iter = AG_NEWS()
+# train_dataset = list(train_iter)
+# test_dataset = list(test_iter)
+train_dataset = process_to_pytorch('yelp_sentiment_tokenized/train_tokenized.tsv', 10000)
+test_dataset = process_to_pytorch('yelp_sentiment_tokenized/test_tokenized.tsv', 10000)
 num_train = int(len(train_dataset) * 0.95)
 split_train_, split_valid_ = \
     random_split(train_dataset, [num_train, len(train_dataset) - num_train])
@@ -158,18 +165,18 @@ def predict(text, text_pipeline):
         output = model(text, torch.tensor([0]))
         return output.argmax(1).item() + 1
 
-ex_text_str = "MEMPHIS, Tenn. – Four days ago, Jon Rahm was \
-    enduring the season’s worst weather conditions on Sunday at The \
-    Open on his way to a closing 75 at Royal Portrush, which \
-    considering the wind and the rain was a respectable showing. \
-    Thursday’s first round at the WGC-FedEx St. Jude Invitational \
-    was another story. With temperatures in the mid-80s and hardly any \
-    wind, the Spaniard was 13 strokes better in a flawless round. \
-    Thanks to his best putting performance on the PGA Tour, Rahm \
-    finished with an 8-under 62 for a three-stroke lead, which \
-    was even more impressive considering he’d never played the \
-    front nine at TPC Southwind."
-
-model = model.to("cpu")
-
-print("This is a %s news" %ag_news_label[predict(ex_text_str, text_pipeline)])
+# ex_text_str = "MEMPHIS, Tenn. – Four days ago, Jon Rahm was \
+#     enduring the season’s worst weather conditions on Sunday at The \
+#     Open on his way to a closing 75 at Royal Portrush, which \
+#     considering the wind and the rain was a respectable showing. \
+#     Thursday’s first round at the WGC-FedEx St. Jude Invitational \
+#     was another story. With temperatures in the mid-80s and hardly any \
+#     wind, the Spaniard was 13 strokes better in a flawless round. \
+#     Thanks to his best putting performance on the PGA Tour, Rahm \
+#     finished with an 8-under 62 for a three-stroke lead, which \
+#     was even more impressive considering he’d never played the \
+#     front nine at TPC Southwind."
+#
+# model = model.to("cpu")
+#
+# print("This is a %s news" %ag_news_label[predict(ex_text_str, text_pipeline)])
