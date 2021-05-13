@@ -11,6 +11,9 @@ from torchtext.vocab import Vocab
 
 
 def process_to_pytorch(file_path, max_lines):
+    # just go through it row by row, instead of pandas
+    # don't need tokenizer
+
     tsv_file = pd.read_csv(filepath_or_buffer=file_path, delimiter='\t', quoting=3, nrows=max_lines, header=None)
 
     # using lowercase
@@ -60,19 +63,24 @@ class TextClassificationModel(nn.Module):
 
     def __init__(self, vocab_size, embed_dim, num_class):
         super(TextClassificationModel, self).__init__()
-        self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
-        self.fc = nn.Linear(embed_dim, num_class)
+        self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)  # word -> average embedding
+        # pretrained embedding
+        #  initialize the embeddings using EmbeddingBag.from_pretrained
+        #  using pretrained embeddings that you load, for example from GloVe embeddings
+        #   freeze = false
+
+        self.linear = nn.Linear(embed_dim, num_class)
         self.init_weights()
 
     def init_weights(self):
         initrange = 0.5
         self.embedding.weight.data.uniform_(-initrange, initrange)
-        self.fc.weight.data.uniform_(-initrange, initrange)
-        self.fc.bias.data.zero_()
+        self.linear.weight.data.uniform_(-initrange, initrange)
+        self.linear.bias.data.zero_()
 
     def forward(self, text, offsets):
         embedded = self.embedding(text, offsets)
-        return self.fc(embedded)
+        return self.linear(embedded)
 
 
 def main():
@@ -80,7 +88,7 @@ def main():
     # in a real implementation, these shouldn't be constants at all.
     EPOCHS = 10
     LR = 5.0
-    BATCH_SIZE = 32  # ???
+    BATCH_SIZE = 32
     EMB_SIZE = 100
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -99,6 +107,11 @@ def main():
 
     # Set up batch collator
     collator = partial(collate_batch, vocab=vocab, device=device)  # ???
+    #   3 to 1 argument function
+    #   read global var.
+
+
+
 
     # Create Dataloaders
     train_dataloader = DataLoader(split_train_, batch_size=BATCH_SIZE, collate_fn=collator,
