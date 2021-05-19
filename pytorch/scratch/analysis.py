@@ -185,7 +185,7 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # load the dataset
-    train_dataset = process_to_pytorch('../yelp_sentiment_tokenized/train_tokenized.tsv', 100)
+    train_dataset = process_to_pytorch('../yelp_sentiment_tokenized/train_tokenized.tsv', 50000)
     test_dataset = process_to_pytorch('../yelp_sentiment_tokenized/test_tokenized.tsv', 10000)
 
     # split the dataset
