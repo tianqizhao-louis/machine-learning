@@ -144,3 +144,6 @@ dmypy.json
 pytorch/model.pth
 
 .data/
+
+pytorch/scratch/emb_word2vec_format.txt
+pytorch/scratch/glove.6B.50d.txt
