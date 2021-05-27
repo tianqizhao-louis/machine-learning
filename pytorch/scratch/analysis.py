@@ -11,6 +11,7 @@ from torch.utils.data.dataset import random_split
 from torchtext.vocab import Vocab
 from gensim.scripts.glove2word2vec import glove2word2vec
 import gensim
+from pathlib import Path
 
 
 def process_to_pytorch(file_path, max_lines):
@@ -97,11 +98,15 @@ def collate_batch(batch, vocab, device):
 
 class TextClassificationModel(nn.Module):
 
-    def __init__(self, embed_dim, num_class, pretrained_embedding):
+    def __init__(self, embed_dim, num_class, pretrained_embedding, vocab_size, use_pretrained):
         super(TextClassificationModel, self).__init__()
-        self.embedding = nn.EmbeddingBag.from_pretrained(pretrained_embedding, freeze=False, sparse=True)
-        self.linear = nn.Linear(embed_dim, num_class)
-        self.init_weights()
+        if use_pretrained:
+            self.embedding = nn.EmbeddingBag.from_pretrained(pretrained_embedding, freeze=False, sparse=True)
+            self.linear = nn.Linear(embed_dim, num_class)
+        else:
+            self.embedding = nn.EmbeddingBag(vocab_size, embed_dim, sparse=True)
+            self.linear = nn.Linear(embed_dim, num_class)
+            self.init_weights()
 
     def init_weights(self):
         init_range = 0.5
@@ -113,55 +118,6 @@ class TextClassificationModel(nn.Module):
         embedded = self.embedding(text, offsets)
         return self.linear(embedded)
 
-#
-# def run_epoch(epochs, model, optimizer, criterion, scheduler, total_accu, train_dataloader, valid_dataloader, test_dataloader):
-#     train_start_time = time.time()
-#     for epoch in range(1, epochs + 1):
-#         epoch_start_time = time.time()
-#         model.train()
-#         total_acc, total_count = 0, 0
-#         log_interval = 250
-#
-#         for iter_, (labels, sequences, offsets) in enumerate(train_dataloader):
-#             optimizer.zero_grad()
-#             output = model(sequences, offsets)
-#             loss = criterion(output, labels)
-#             loss.backward()
-#             torch.nn.utils.clip_grad_norm_(model.parameters(), 0.1)
-#             optimizer.step()
-#             total_acc += (output.argmax(1) == labels).sum().item()
-#             total_count += labels.size(0)
-#             if iter_ % log_interval == 0 and iter_ > 0:
-#                 print('| epoch {:3d} | {:5d}/{:5d} batches '
-#                       '| accuracy {:8.3f}'.format(epoch, iter_, len(train_dataloader),
-#                                                   total_acc / total_count))
-#                 total_acc, total_count = 0, 0
-#
-#         model.eval()
-#
-#         accu_val = count_accuracy(torch, valid_dataloader, model)
-#
-#         epoch_lr = scheduler.get_last_lr()[0]
-#         if total_accu is not None and total_accu > accu_val:
-#           scheduler.step()
-#         else:
-#            total_accu = accu_val
-#         print('-' * 59)
-#         print('| end of epoch {:3d} | time: {:5.2f}s | lr: {} | '
-#               'valid accuracy {:8.3f} '.format(epoch,
-#                                                time.time() - epoch_start_time,
-#                                                epoch_lr,
-#                                                accu_val))
-#         print('-' * 59)
-#     training_time = time.time() - train_start_time
-#     print(f"training time {training_time:5.2f}s")
-#
-#     print('Checking the results of test dataset.')
-#     model.eval()
-#
-#     accu_test = count_accuracy(torch, test_dataloader, model)
-#     print('test accuracy {:8.3f}'.format(accu_test))
-#
 
 def count_accuracy(torch, dataloader, model):
     total_acc, total_count = 0, 0
@@ -185,8 +141,8 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # load the dataset
-    train_dataset = process_to_pytorch('../yelp_sentiment_tokenized/train_tokenized.tsv', 50000)
-    test_dataset = process_to_pytorch('../yelp_sentiment_tokenized/test_tokenized.tsv', 10000)
+    train_dataset = process_to_pytorch(params["train_file_path"], 50000)
+    test_dataset = process_to_pytorch(params["test_file_path"], 10000)
 
     # split the dataset
     num_train = int(len(train_dataset) * 0.9)
@@ -212,12 +168,18 @@ def main():
                                  shuffle=True)
 
     # use glove to vectorize words
-    glove2word2vec(glove_input_file="glove.6B.50d.txt", word2vec_output_file="emb_word2vec_format.txt")
-    vec_model = gensim.models.KeyedVectors.load_word2vec_format('emb_word2vec_format.txt')
-    pretrained_embedding = torch.FloatTensor(vec_model.vectors)
+    glove_output_path = Path(params["glove_format_path"])
+    if not glove_output_path.exists():
+        glove2word2vec(glove_input_file=params["glove_file_path"], word2vec_output_file=params["glove_output_file_path"])
+        vec_model = gensim.models.KeyedVectors.load_word2vec_format(params["glove_format_path"])
+        pretrained_embedding = torch.FloatTensor(vec_model.vectors)
+    else:
+        vec_model = gensim.models.KeyedVectors.load_word2vec_format(params["glove_format_path"])
+        pretrained_embedding = torch.FloatTensor(vec_model.vectors)
 
     # init the model
-    model = TextClassificationModel(emb_size, size_unique_label, pretrained_embedding).to(device)
+    use_pretrained = params["use_pretrained"]
+    model = TextClassificationModel(emb_size, size_unique_label, pretrained_embedding, vocab_size, use_pretrained).to(device)
 
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
