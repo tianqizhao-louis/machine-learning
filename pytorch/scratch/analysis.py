@@ -35,7 +35,7 @@ def process_to_pytorch(file_path, max_lines):
                 index = 1
 
             # tuple of (index, sentence)
-            list_of_tokens.append((index, row[1].split(" ")))
+            list_of_tokens.append((index, [word.lower() for word in row[1].split(" ")]))
             i += 1
 
     tsv_file.close()

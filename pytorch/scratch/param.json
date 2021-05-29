@@ -8,5 +8,5 @@
   "glove_file_path" : "glove.6B.50d.txt",
   "glove_output_file_path" : "emb_word2vec_format.txt",
   "glove_format_path" : "emb_word2vec_format.txt",
-  "use_pretrained" : true
+  "use_pretrained" : false
 }
