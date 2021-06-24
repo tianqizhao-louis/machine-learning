@@ -139,7 +139,7 @@ venv.bak/
 .dmypy.json
 dmypy.json
 flair/resources
-
+conll_03
 # Pyre type checker
 .pyre/
 pytorch/model.pth
