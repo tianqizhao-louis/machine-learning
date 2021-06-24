@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+.idea
 yelp_sentiment_tokenized/
 data/
 pytorch/yelp_sentiment_tokenized/
