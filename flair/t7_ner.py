@@ -29,8 +29,8 @@ embedding_types = [
     # CharacterEmbeddings(),
 
     # comment in these lines to use flair embeddings
-    # FlairEmbeddings('news-forward'),
-    # FlairEmbeddings('news-backward'),
+    FlairEmbeddings('news-forward'),
+    FlairEmbeddings('news-backward'),
 ]
 
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
@@ -38,11 +38,11 @@ embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 # 5. initialize sequence tagger
 from flair.models import SequenceTagger
 
-tagger: SequenceTagger = SequenceTagger(hidden_size=128,  # changed from 256 to 128
+tagger: SequenceTagger = SequenceTagger(hidden_size=256,  # changed from 256 to 128
                                         embeddings=embeddings,
                                         tag_dictionary=tag_dictionary,
                                         tag_type=tag_type,
-                                        use_crf=False  # changed from true to false
+                                        use_crf=True  # changed from true to false
                                         )
 
 # 6. initialize trainer
@@ -52,7 +52,8 @@ trainer: ModelTrainer = ModelTrainer(tagger, corpus)
 trainer.train('resources/ner/ner-training',
               learning_rate=0.1,
               mini_batch_size=32,
-              max_epochs=10  # reduced from 150 to 10
+              max_epochs=30,  # reduced from 150 to 10
+              embeddings_storage_mode='gpu'
               )
 # embeddings_storage_mode='gpu'
 
