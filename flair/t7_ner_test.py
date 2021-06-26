@@ -9,10 +9,12 @@ from flair.tokenization import SegtokSentenceSplitter
 
 
 # load the model you trained
-model = SequenceTagger.load('flair/resources/ner/ner-training/final-model.pt')
+model = SequenceTagger.load('resources/ner/ner-training/final-model.pt')
+# won't work in local computer
 
 # create example sentence
-text = 'Today we will see how we can use huggingface’s transformers library to summarize any given text. T5 is an abstractive summarization algorithm. It means that it will rewrite sentences when necessary than just picking up sentences directly from the original text.'
+text = 'Under Minnesota law, Chauvin will have to serve two-thirds of his sentence, or 15 years -- and he will be eligible for supervised release for the remaining seven and a half years. The sentence exceeds the Minnesota sentencing guideline range of 10 years and eight months to 15 years for the crime. Floyd\'s death sparked massive protests across the nation over police brutality. Floyd\'s final moments, captured on searing cell phone footage by a 17-year-old, illustrated in clear visuals what Black Americans have long said about how the criminal justice system treats Black people. Floyd\'s death set off mass protests across the globe as well as incidents of looting and unrest.'
+
 splitter = SegtokSentenceSplitter()
 sentences = splitter.split(text)
 
