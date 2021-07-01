@@ -1,18 +1,27 @@
 # Training a Sequence Labeling Model
 from flair.data import Corpus
-from flair.datasets.sequence_labeling import CONLL_03
+# from flair.datasets.sequence_labeling import CONLL_03
 from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings
 from flair.embeddings import FlairEmbeddings
 from flair.trainers import ModelTrainer
 from flair.data import Sentence
 from flair.models import SequenceTagger
+from flair.datasets import ColumnCorpus
+
+columns = {0: 'text', 1: 'ner'}
+data_folder = './conll_03'
+corpus: Corpus = ColumnCorpus(data_folder, columns,
+                              train_file='eng.train',
+                              test_file='eng.testb',
+                              dev_file='eng.testa')
+
 
 # downsample the data to 10%
-
-# 1. get the corpus
-corpus: Corpus = CONLL_03(base_path='./')
-print(corpus)
-
+#
+# # 1. get the corpus
+# corpus: Corpus = CONLL_03(base_path='./')
+# print(corpus)
+#
 # 2. what tag do we want to predict?
 tag_type = 'ner'
 
