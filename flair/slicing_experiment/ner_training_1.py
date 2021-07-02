@@ -1,3 +1,13 @@
+# Slice up the english CoNLL training data by documents into 4 pieces. This is probably easiest to do by hand. Get the total number of lines in the training file. Let's pretend it's 1000, then you would go to line 250, keep going down a little bit until you see a line that ends in DOCSTART, and then put lines 1-that line into a file. Repeat for the other pieces, we'll call them pieces 1-4.
+# Train a model on piece 1 and evaluate on the dev set.
+# Take the trained model and predict the labels for piece 2. Then train a new model on the concatenation of piece 1 and the predicted labels for piece 2. Evaluate this on the dev set.
+# Train a model on pieces 1-2 and evaluate on the dev set.
+# Compare the performance of all three models.
+
+
+
+
+
 # Training a Sequence Labeling Model
 from flair.data import Corpus
 # from flair.datasets.sequence_labeling import CONLL_03
