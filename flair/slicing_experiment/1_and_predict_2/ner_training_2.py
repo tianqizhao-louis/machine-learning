@@ -58,7 +58,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,  # changed from 256 to 
 trainer: ModelTrainer = ModelTrainer(tagger, corpus)
 
 # 7. start training
-trainer.train('resources/ner/slicing_1',
+trainer.train('resources/ner/slicing_1_and_2',
               learning_rate=0.1,
               mini_batch_size=32,
               max_epochs=30,  # reduced from 150 to 10

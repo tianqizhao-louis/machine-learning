@@ -145,6 +145,7 @@ conll_03
 pytorch/model.pth
 
 .data/
+resources/
 
 pytorch/scratch/emb_word2vec_format.txt
 pytorch/scratch/glove.6B.50d.txt
