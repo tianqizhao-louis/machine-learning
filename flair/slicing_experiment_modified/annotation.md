@@ -23,12 +23,12 @@ Expected file:
 
 Expected Lengths: 
 
-- dev.tsv of slice 1: 55044
+- `dev.tsv` of slice 1: 55044
 - slice 2: 53865
 
 Actual Lengths:
 
-- dev.tsv of slice 1: ***55938*** **(Might be the problem)**
+- `dev.tsv` of slice 1: ***55938*** **(Might be the problem)**
 - eng.testb: 53865
 
 ## Third experiment: Using slice 1 + predicted labels of slice 2 to train model
