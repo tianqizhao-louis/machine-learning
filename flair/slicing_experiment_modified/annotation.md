@@ -18,12 +18,17 @@ Directory: `./predict_2`
 
 Expected file: 
 
-- `./predict_2/conll_03/eng.train` -> `dev.tsv` of slice 1
+- `./predict_2/conll_03/eng.train` -> `dev.tsv` of slice 1 from the first experiment
 - `./predict_2/conll_03/eng.testb` -> slice 2
 
-Expected Lengths:
+Expected Lengths: 
+
+- dev.tsv of slice 1: 55044
 
 Actual Lengths:
+
+- dev.tsv of slice 1: ***55938*** **(Might be the problem)**
+- 
 
 ## Third experiment: Using slice 1 + predicted labels of slice 2 to train model
 
