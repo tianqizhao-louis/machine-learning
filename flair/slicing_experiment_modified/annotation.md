@@ -8,9 +8,9 @@ Expected file:
 
 - `./1/conll_03/eng.train` -> slice 1
 
-Expected Lengths:
+Expected Lengths: 55938
 
-Actual Lengths
+Actual Lengths: 55938
 
 ## Second experiment: using slice 1 training model on predicting slice 2
 
