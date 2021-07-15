@@ -8,7 +8,7 @@ from flair.data import Sentence
 from flair.models import SequenceTagger
 from flair.datasets import ColumnCorpus
 
-columns = {0: 'text', 1: 'ner'}
+columns = {0: 'text', 3: 'ner'}
 data_folder = './conll_03'
 corpus: Corpus = ColumnCorpus(data_folder, columns,
                               train_file='eng.train',
