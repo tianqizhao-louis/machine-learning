@@ -32,3 +32,13 @@ with open('original_sentence.txt', 'w', encoding='utf-8') as f:
     for line in text.sentences:
         f.write(str(line))
         f.write('\n')
+
+
+with open('token_sentence.txt', 'w', encoding='utf-8') as f:
+    for line in text.sentences:
+        for token in line:
+            f.write(str(token.text))
+            f.write(' ')
+            f.write(str(token.get_tag('ner').value))
+            f.write('\n')
+        f.write('\n')
